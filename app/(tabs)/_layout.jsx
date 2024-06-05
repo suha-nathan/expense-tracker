@@ -1,6 +1,7 @@
 import { View, Text, Image } from "react-native";
 import { Tabs } from "expo-router";
-import home from "../../assets/icons/home.png";
+import { icons } from "../../constants";
+const homeIcon = require("../../assets/icons/home.png");
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -24,7 +25,11 @@ const TabIcon = ({ icon, color, name, focused }) => {
 const TabsLayout = () => {
   return (
     <>
-      <Tabs>
+      <Tabs
+        screenOptions={{
+          tabBarShowLabel: false,
+        }}
+      >
         <Tabs.Screen
           name="home"
           options={{
@@ -32,9 +37,55 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={home}
+                icon={homeIcon}
                 color={color}
                 name="Home"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="bookmark"
+          options={{
+            title: "Bookmark",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.bookmark}
+                color={color}
+                name="Bookmark"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="create"
+          options={{
+            title: "Create",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.plus}
+                color={color}
+                name="Create"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.profile}
+                color={color}
+                name="Profile"
                 focused={focused}
               />
             ),
@@ -44,5 +95,4 @@ const TabsLayout = () => {
     </>
   );
 };
-
 export default TabsLayout;

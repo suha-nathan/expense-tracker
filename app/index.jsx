@@ -1,8 +1,6 @@
-import { Text, View, Image } from "react-native";
+import { Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link } from "expo-router";
-
-const homeImage = require("../assets/icons/home.png");
 
 const App = () => {
   return (
@@ -12,13 +10,7 @@ const App = () => {
       <Link href="/home" style={{ color: "blue" }}>
         Go to Home
       </Link>
-      <Image
-        source={homeImage}
-        resizeMode="contain"
-        style={{ width: 24, height: 24 }}
-      />
     </View>
   );
 };
-
 export default App;

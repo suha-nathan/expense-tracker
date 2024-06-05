@@ -1,8 +1,5 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
-import { icons } from "../../constants";
-
-const homeImage = require("../../assets/icons/home.png");
+import { View, Text } from "react-native";
 
 const Home = () => {
   return (
