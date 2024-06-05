@@ -1,16 +1,24 @@
 import { View, Text, Image } from "react-native";
 import { Tabs } from "expo-router";
-import { icons } from "../../constants";
-const homeIcon = require("../../assets/icons/home.png");
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { faHouse } from "@fortawesome/free-solid-svg-icons/faHouse";
+import { faBookmark } from "@fortawesome/free-solid-svg-icons/faBookmark";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
+
+library.add(fab, faHouse, faBookmark, faPlus, faUser);
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="flex items-center justify-center gap-2">
-      <Image
-        source={icon}
+    <View className="flex items-center justify-center gap-1">
+      <FontAwesomeIcon
+        icon={icon}
         resizeMode="contain"
-        tintColor={color}
-        className="w-6 h-6"
+        color={color}
+        size={20}
       />
       <Text
         className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
@@ -37,7 +45,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={homeIcon}
+                icon="house"
                 color={color}
                 name="Home"
                 focused={focused}
@@ -52,7 +60,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.bookmark}
+                icon="bookmark"
                 color={color}
                 name="Bookmark"
                 focused={focused}
@@ -67,7 +75,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.plus}
+                icon="plus"
                 color={color}
                 name="Create"
                 focused={focused}
@@ -83,7 +91,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.profile}
+                icon="user"
                 color={color}
                 name="Profile"
                 focused={focused}
