@@ -20,7 +20,7 @@ const SignIn = () => {
     }
     setIsSubmitting(true);
     try {
-      // const result = await signIn(form.email, form.password);
+      const result = await signIn(form.email, form.password);
       //set result to global context
 
       router.push("/home");
