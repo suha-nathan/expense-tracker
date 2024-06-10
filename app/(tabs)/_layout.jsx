@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native";
 import { Tabs } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-
+import { StatusBar } from "expo-status-bar";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faHouse } from "@fortawesome/free-solid-svg-icons/faHouse";
@@ -108,6 +108,7 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+      <StatusBar backgroundColor="#161622" style="light" />
     </>
   );
 };
