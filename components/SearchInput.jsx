@@ -2,7 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons/faMagnifyingGlass";
-import { usePathname, setParams, router } from "expo-router";
+import { usePathname, router } from "expo-router";
 
 const SearchInput = ({
   title,
