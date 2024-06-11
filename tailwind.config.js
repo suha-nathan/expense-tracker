@@ -2,14 +2,17 @@
 module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    colors: {
+      primary: "#262450",
+      secondary: "#19173D",
+      lightblue: "#0DA6C2",
+      purple: "#0E39C6",
+      gray: "#484664",
+      darkpurple: "7B78AA",
+      white: "#FFFFFF",
+    },
     extend: {
       colors: {
-        primary: "#161622",
-        secondary: {
-          DEFAULT: "#FF9C01",
-          100: "#FF9001",
-          200: "#FF8E01",
-        },
         black: {
           DEFAULT: "#000",
           100: "#1E1E2D",
