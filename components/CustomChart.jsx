@@ -1,16 +1,7 @@
 import { View, Text } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
-const CustomChart = ({ chartData }) => {
-  //   console.log(chartData);
-  const data1 = [
-    { value: 70 },
-    { value: 36 },
-    { value: 50 },
-    { value: 40 },
-    { value: 18 },
-    { value: 38 },
-  ];
+const CustomChart = ({ chartData, timeFrame }) => {
   const data2 = [
     { value: 50 },
     { value: 10 },
@@ -21,25 +12,26 @@ const CustomChart = ({ chartData }) => {
   ];
   return (
     <View
-      style={{
-        paddingVertical: 100,
-        paddingLeft: 20,
-        backgroundColor: "#19173D",
-      }}
+      //   style={{
+      //     shadowColor: "#ffffff",
+      //     shadowOffset: { width: 0, height: 10 },
+      //     shadowOpacity: 0.5,
+      //     shadowRadius: 20,
+      //     elevation: 20,
+      //   }}
+      className="p-5 rounded-3xl bg-secondary mt-4"
     >
       <LineChart
         areaChart
-        curved
-        data={data1}
-        data2={data2}
+        // curved
+        isAnimated
+        data={data2}
         hideDataPoints
         spacing={50}
-        color1="#8a56ce"
-        color2="#56acce"
-        startFillColor1="#8a56ce"
-        startFillColor2="#56acce"
-        endFillColor1="#8a56ce"
-        endFillColor2="#56acce"
+        height={150}
+        color="#56acce"
+        startFillColor="#56acce"
+        endFillColor="#56acce"
         startOpacity={0.9}
         endOpacity={0.2}
         initialSpacing={0}
@@ -48,8 +40,8 @@ const CustomChart = ({ chartData }) => {
         yAxisThickness={0}
         rulesType="solid"
         rulesColor="gray"
-        yAxisTextStyle={{ color: "gray" }}
-        yAxisLabelSuffix="%"
+        yAxisTextStyle={{ color: "lightgray" }}
+        yAxisLabelPrefix="$"
         xAxisColor="lightgray"
         pointerConfig={{
           pointerStripUptoDataPoint: true,
@@ -62,27 +54,9 @@ const CustomChart = ({ chartData }) => {
           pointerLabelHeight: 120,
           pointerLabelComponent: (items) => {
             return (
-              <View
-                style={{
-                  height: 120,
-                  width: 100,
-                  backgroundColor: "#282C3E",
-                  borderRadius: 4,
-                  justifyContent: "center",
-                  paddingLeft: 16,
-                }}
-              >
-                <Text style={{ color: "lightgray", fontSize: 12 }}>{2018}</Text>
+              <View className="bg-secondary border-white w-12 h-8 p-1 rounded-lg justify-center items-center">
                 <Text style={{ color: "white", fontWeight: "bold" }}>
                   {items[0].value}
-                </Text>
-                <Text
-                  style={{ color: "lightgray", fontSize: 12, marginTop: 12 }}
-                >
-                  {2019}
-                </Text>
-                <Text style={{ color: "white", fontWeight: "bold" }}>
-                  {items[1].value}
                 </Text>
               </View>
             );

@@ -51,9 +51,9 @@ const StatisticsBox = () => {
   }
 
   return (
-    <View className="flex border-2 h-1/2 border-white justify-start items-center">
+    <View className="flex h-1/2 justify-start items-center">
       <View
-        className="h-[18%] w-[90%] border-2 border-white-50 mt-2 
+        className="h-[18%] w-[90%] border-2 border-white-20 mt-2 
         justify-center rounded-xl flex-row"
       >
         <ButtonItem
@@ -72,7 +72,7 @@ const StatisticsBox = () => {
           isActive={timeFrame === "Year"}
         />
       </View>
-      <CustomChart chartData={chartData} />
+      <CustomChart chartData={chartData} timeFrame={timeFrame} />
     </View>
   );
 };

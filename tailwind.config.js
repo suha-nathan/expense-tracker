@@ -15,6 +15,7 @@ module.exports = {
       white: {
         DEFAULT: "#FFFFFF",
         50: "rgba(255, 255, 255, 0.5)",
+        20: "rgba(255, 255, 255, 0.2)",
       },
     },
     extend: {
