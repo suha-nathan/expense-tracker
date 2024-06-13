@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
 const CustomChart = ({ chartData, timeFrame }) => {
+  //process data according to timeFrame
   const data2 = [
     { value: 50 },
     { value: 10 },

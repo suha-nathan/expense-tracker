@@ -1,38 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalContext } from "../context/GlobalProvider";
 import { getUserReceipts } from "../lib/appwrite";
 import useAppwrite from "../lib/useAppwrite";
 import CustomChart from "./CustomChart";
-
-const ButtonItem = ({ timeFrame, setTimeFrame, isActive }) => {
-  return (
-    <>
-      {isActive ? (
-        <LinearGradient
-          className="h-[100%] 
-    w-1/3 justify-center items-center rounded-xl"
-          colors={["#0DA6C2", "#7B78AA"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text className="text-base text-white font-pbold">{timeFrame}</Text>
-        </LinearGradient>
-      ) : (
-        <TouchableOpacity
-          className="h-[100%] 
-      w-1/3 justify-center items-center "
-          onPress={() => {
-            setTimeFrame(timeFrame);
-          }}
-        >
-          <Text className="text-base text-white font-pbold">{timeFrame}</Text>
-        </TouchableOpacity>
-      )}
-    </>
-  );
-};
+import ButtonItem from "./ButtonItem";
 
 const StatisticsBox = () => {
   const { user } = useGlobalContext();
@@ -44,8 +16,8 @@ const StatisticsBox = () => {
 
   let chartData = [];
   if (!isLoading && receipts) {
-    chartData = receipts?.map((item) => {
-      let date = new Date(item?.purchaseDate);
+    chartData = receipts.map((item) => {
+      let date = new Date(item.purchaseDate);
       return { date: date, total: item?.total };
     });
   }

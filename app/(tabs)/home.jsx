@@ -1,10 +1,10 @@
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import StatisticsBox from "../../components/StatisticsBox";
-import useAppwrite from "../../lib/useAppwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import TransactionList from "../../components/TransactionList";
 
 // scroll view doesnt support horizontal and vertical flat lists at the same time
 // therefore use a flatlist (horizontal) within the header component of a flatlist (vertical)
@@ -20,6 +20,7 @@ const Home = () => {
   };
   return (
     <SafeAreaView className="bg-primary h-full">
+      {/* Header */}
       <View className="justify-start items-start flex-row my-6 px-4 ">
         <View className="w-16 h-16 border-2 border-lightblue rounded-full justify-center items-center">
           <Image
@@ -34,7 +35,13 @@ const Home = () => {
           </Text>
         </View>
       </View>
+
+      {/* Chart and Buttons to change chart */}
       <StatisticsBox />
+
+      {/* List of transactions and Buttons to filter list */}
+
+      <TransactionList />
     </SafeAreaView>
   );
 };
