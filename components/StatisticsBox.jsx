@@ -25,20 +25,23 @@ const StatisticsBox = () => {
   return (
     <View className="flex h-1/2 justify-start items-center">
       <View
-        className="h-[18%] w-[90%] border-2 border-white-20 mt-2 
-        justify-center rounded-xl flex-row"
+        className="h-[18%] w-[90%] bg-secondary border-2 border-white-20 mt-2 
+        justify-center rounded-3xl flex-row"
       >
         <ButtonItem
+          itemStyles="w-1/3"
           timeFrame="Week"
           setTimeFrame={setTimeFrame}
           isActive={timeFrame === "Week"}
         />
         <ButtonItem
+          itemStyles="w-1/3"
           timeFrame="Month"
           setTimeFrame={setTimeFrame}
           isActive={timeFrame === "Month"}
         />
         <ButtonItem
+          itemStyles="w-1/3"
           timeFrame="Year"
           setTimeFrame={setTimeFrame}
           isActive={timeFrame === "Year"}

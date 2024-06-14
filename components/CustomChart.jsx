@@ -20,7 +20,7 @@ const CustomChart = ({ chartData, timeFrame }) => {
       //     shadowRadius: 20,
       //     elevation: 20,
       //   }}
-      className="p-5 rounded-3xl bg-secondary mt-4"
+      className="p-5 rounded-3xl bg-secondary mt-4 border-white-20 border-2"
     >
       <LineChart
         areaChart
