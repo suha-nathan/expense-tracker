@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ScrollView } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -36,11 +36,7 @@ const Home = () => {
         </View>
       </View>
 
-      {/* Chart and Buttons to change chart */}
-      <StatisticsBox />
-
       {/* List of transactions and Buttons to filter list */}
-
       <TransactionList />
     </SafeAreaView>
   );

@@ -8,10 +8,10 @@ import ButtonItem from "./ButtonItem";
 
 const StatisticsBox = () => {
   const { user } = useGlobalContext();
-  const [timeFrame, setTimeFrame] = useState("Week"); //week month year
+  const [chartTimeFrame, setChartTimeFrame] = useState("Week"); //week month year
 
   const { data: receipts, isLoading } = useAppwrite(() =>
-    getUserReceipts(user.$id)
+    getUserReceipts(user.$id, chartTimeFrame)
   );
 
   let chartData = [];
@@ -23,31 +23,31 @@ const StatisticsBox = () => {
   }
 
   return (
-    <View className="flex h-1/2 justify-start items-center">
+    <View className="flex h-[350px] justify-start items-center">
       <View
-        className="h-[18%] w-[90%] bg-secondary border-2 border-white-20 mt-2 
+        className="h-[20%] w-[90%] bg-secondary border-2 border-white-20 mt-2 
         justify-center rounded-3xl flex-row"
       >
         <ButtonItem
-          itemStyles="w-1/3"
+          itemStyles="w-1/3 rounded-3xl"
           timeFrame="Week"
-          setTimeFrame={setTimeFrame}
-          isActive={timeFrame === "Week"}
+          setTimeFrame={setChartTimeFrame}
+          isActive={chartTimeFrame === "Week"}
         />
         <ButtonItem
-          itemStyles="w-1/3"
+          itemStyles="w-1/3 rounded-3xl"
           timeFrame="Month"
-          setTimeFrame={setTimeFrame}
-          isActive={timeFrame === "Month"}
+          setTimeFrame={setChartTimeFrame}
+          isActive={chartTimeFrame === "Month"}
         />
         <ButtonItem
-          itemStyles="w-1/3"
+          itemStyles="w-1/3 rounded-3xl"
           timeFrame="Year"
-          setTimeFrame={setTimeFrame}
-          isActive={timeFrame === "Year"}
+          setTimeFrame={setChartTimeFrame}
+          isActive={chartTimeFrame === "Year"}
         />
       </View>
-      <CustomChart chartData={chartData} timeFrame={timeFrame} />
+      <CustomChart chartData={chartData} timeFrame={chartTimeFrame} />
     </View>
   );
 };

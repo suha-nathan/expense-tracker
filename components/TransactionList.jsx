@@ -2,15 +2,16 @@ import { View, Text, FlatList, Image } from "react-native";
 import useAppwrite from "../lib/useAppwrite";
 import { getUserReceipts } from "../lib/appwrite";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonItem from "./ButtonItem";
 import { images } from "../constants";
+import StatisticsBox from "./StatisticsBox";
 
 const TransactionList = () => {
-  const [timeFrame, setTimeFrame] = useState("W");
+  const [listTimeFrame, setListTimeFrame] = useState("W");
   const { user } = useGlobalContext();
   const { data: filteredRecipts, isLoading } = useAppwrite(() =>
-    getUserReceipts(user.$id, timeFrame)
+    getUserReceipts(user.$id, listTimeFrame)
   );
   if (!isLoading && filteredRecipts) {
     // console.log("filtered receipts: ", filteredRecipts);
@@ -53,44 +54,50 @@ const TransactionList = () => {
           </View>
         );
       }}
-      ListHeaderComponent={() => (
-        <View classNmae="w-[90%] flex-row border-2 border-white">
-          <View className="w-full h-20 mx-auto">
-            <Text className="text-white font-pextrabold text-2xl">
-              Transactions
-            </Text>
+      ListHeaderComponent={
+        // {/* Chart and Buttons to change chart */}
+        <>
+          <StatisticsBox />
+
+          {/* Buttons and header to filter list */}
+          <View className="w-[90%] flex-row my-2 mx-auto justify-center items-center">
+            <View className="w-1/2 h-20 justify-center items-center ">
+              <Text className="text-white font-pextrabold text-xl">
+                Transactions
+              </Text>
+            </View>
+            <View
+              className="h-[50px] w-[55%] bg-secondary border-2 border-white-20 mt-1 
+        justify-center rounded-2xl flex-row"
+            >
+              <ButtonItem
+                itemStyles="w-1/4 rounded-2xl"
+                timeFrame="D"
+                setTimeFrame={setListTimeFrame}
+                isActive={listTimeFrame === "D"}
+              />
+              <ButtonItem
+                itemStyles="w-1/4 rounded-2xl"
+                timeFrame="W"
+                setTimeFrame={setListTimeFrame}
+                isActive={listTimeFrame === "W"}
+              />
+              <ButtonItem
+                itemStyles="w-1/4 rounded-2xl"
+                timeFrame="M"
+                setTimeFrame={setListTimeFrame}
+                isActive={listTimeFrame === "M"}
+              />
+              <ButtonItem
+                itemStyles="w-1/4 rounded-2xl"
+                timeFrame="Y"
+                setTimeFrame={setListTimeFrame}
+                isActive={listTimeFrame === "Y"}
+              />
+            </View>
           </View>
-          <View
-            className="h-[50px] w-[60%] bg-secondary border-2 border-white-20 mt-1 
-        justify-center rounded-3xl flex-row"
-          >
-            <ButtonItem
-              itemStyles="w-1/4"
-              timeFrame="D"
-              setTimeFrame={setTimeFrame}
-              isActive={timeFrame === "D"}
-            />
-            <ButtonItem
-              itemStyles="w-1/4"
-              timeFrame="W"
-              setTimeFrame={setTimeFrame}
-              isActive={timeFrame === "W"}
-            />
-            <ButtonItem
-              itemStyles="w-1/4"
-              timeFrame="M"
-              setTimeFrame={setTimeFrame}
-              isActive={timeFrame === "M"}
-            />
-            <ButtonItem
-              itemStyles="w-1/4"
-              timeFrame="Y"
-              setTimeFrame={setTimeFrame}
-              isActive={timeFrame === "Y"}
-            />
-          </View>
-        </View>
-      )}
+        </>
+      }
     />
   );
 };

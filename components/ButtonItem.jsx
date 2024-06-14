@@ -7,7 +7,7 @@ const ButtonItem = ({ timeFrame, setTimeFrame, isActive, itemStyles }) => {
       {isActive ? (
         <LinearGradient
           className={`h-[100%] 
-      ${itemStyles} justify-center items-center rounded-3xl`}
+      ${itemStyles} justify-center items-center`}
           colors={["#0DA6C2", "#7B78AA"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
