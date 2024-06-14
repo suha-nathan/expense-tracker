@@ -23,12 +23,21 @@ import CustomButton from "../../components/CustomButton";
 const Create = () => {
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    video: null,
-    thumbnail: null,
-    prompt: "",
+  const [expense, setExpense] = useState({
+    store: "",
+    image: null,
+    subTotal: 0,
+    total: 0,
+    purchaseDate: "",
+    category: "",
   });
+  const [lineItems, setLineItems] = useState([
+    {
+      productName: "",
+      price: 0,
+      quantity: 0,
+    },
+  ]);
 
   const openPicker = async (selectType) => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -69,42 +78,22 @@ const Create = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
-        <Text className="text-2xl text-white font-psemibold">Upload Video</Text>
+        <Text className="text-2xl text-white font-psemibold">Add Expense</Text>
         <FormField
-          title="Video Title"
-          value={form.title}
-          placeholder="Give your video a catchy title"
-          handleChangeText={(e) => setForm({ ...form, title: e })}
+          title="Store"
+          value={expense.store}
+          placeholder="Store where purchase was made"
+          handleChangeText={(e) => setExpense({ ...expense, store: e })}
           otherStyles="mt-10"
         />
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 text-pmedium">
-            Upload Video
-          </Text>
-          <TouchableOpacity onPress={() => openPicker("video")}>
-            {form.video ? (
-              <Video
-                source={{ uri: form.video.uri }}
-                className="w-full h-64 rounded-2xl"
-                resizeMode={ResizeMode.COVER}
-              />
-            ) : (
-              <View className="w-full h-40 px-4 bg-black-100 rounded-2xl justify-center items-center">
-                <View className="w-14 h-14 border border-dashed border-secondary-100 justify-center items-center">
-                  <FontAwesomeIcon icon={faUpload} color="#FF9001" size={20} />
-                </View>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-        <View className="mt-7 space-y-2">
-          <Text className="text-base text-gray-100 text-pmedium">
-            Thumbnail Image
+            Upload Receipt Image
           </Text>
           <TouchableOpacity onPress={() => openPicker("image")}>
-            {form.thumbnail ? (
+            {expense.image ? (
               <Image
-                source={{ uri: form.thumbnail.uri }}
+                source={{ uri: expense.image.uri }}
                 className="w-full h-64 rounded-2xl"
                 resizeMode="cover"
               />
@@ -122,10 +111,31 @@ const Create = () => {
           </TouchableOpacity>
         </View>
         <FormField
-          title="AI Prompt"
-          value={form.prompt}
-          placeholder="Prompt used to create this video"
-          handleChangeText={(e) => setForm({ ...form, prompt: e })}
+          title="Sub Total"
+          value={expense.subTotal}
+          placeholder="Sub total of all items (before tax)"
+          handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
+          otherStyles="mt-7"
+        />
+        <FormField
+          title="Total"
+          value={expense.total}
+          placeholder="Total of all items (after tax)"
+          handleChangeText={(e) => setExpense({ ...expense, total: e })}
+          otherStyles="mt-7"
+        />
+        <FormField
+          title="Purchase Date"
+          value={expense.purchaseDate}
+          placeholder="Date when purchase was made"
+          handleChangeText={(e) => setExpense({ ...expense, purchaseDate: e })}
+          otherStyles="mt-7"
+        />
+        <FormField
+          title="Category"
+          value={expense.category}
+          placeholder="Category of purchase"
+          handleChangeText={(e) => setExpense({ ...expense, category: e })}
           otherStyles="mt-7"
         />
         <CustomButton
