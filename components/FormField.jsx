@@ -16,7 +16,7 @@ const FormField = ({
   return (
     <View className={`space-y-2 ${otherStyles}`}>
       <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
-      <View className="flex-row w-full h-16 px-4 border-2 border-black-200 bg-black-100 rounded-2xl focus:border-secondary items-center">
+      <View className="flex-row w-full h-16 px-4 border-2 border-black-200 bg-black-100 rounded-2xl focus:border-lightblue items-center">
         <TextInput
           className="flex-1 text-white font-psemibold text-base"
           value={value}
@@ -24,6 +24,8 @@ const FormField = ({
           placeholderTextColor="#7b7b8b"
           onChangeText={handleChangeText}
           secureTextEntry={title === "Password" && !showPassword}
+          editable={props.editable === false ? false : true}
+          selectTextOnFocus={props.selectTextOnFocus === false ? false : true}
         />
         {title == "Password" && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

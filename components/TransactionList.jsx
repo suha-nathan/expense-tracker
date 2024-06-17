@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import useAppwrite from "../lib/useAppwrite";
 import { getUserReceipts } from "../lib/appwrite";
 import { useGlobalContext } from "../context/GlobalProvider";
@@ -8,14 +8,26 @@ import { images } from "../constants";
 import StatisticsBox from "./StatisticsBox";
 
 const TransactionList = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [listTimeFrame, setListTimeFrame] = useState("W");
+
   const { user } = useGlobalContext();
-  const { data: filteredRecipts, isLoading } = useAppwrite(() =>
-    getUserReceipts(user.$id, listTimeFrame)
-  );
-  if (!isLoading && filteredRecipts) {
-    // console.log("filtered receipts: ", filteredRecipts);
-  }
+
+  const {
+    data: filteredRecipts,
+    isLoading,
+    refetch,
+  } = useAppwrite(() => getUserReceipts(user.$id, listTimeFrame));
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    onRefresh();
+  }, [listTimeFrame]);
 
   return (
     <FlatList
@@ -98,8 +110,10 @@ const TransactionList = () => {
           </View>
         </>
       }
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     />
   );
 };
-
 export default TransactionList;

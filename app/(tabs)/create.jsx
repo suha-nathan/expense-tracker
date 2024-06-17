@@ -6,11 +6,11 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ResizeMode, Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { faUpload } from "@fortawesome/free-solid-svg-icons/faUpload";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -19,10 +19,12 @@ import { createVideo } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
+import LineItemList from "../../components/LineItemList";
 
 const Create = () => {
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [expense, setExpense] = useState({
     store: "",
     image: null,
@@ -39,22 +41,28 @@ const Create = () => {
     },
   ]);
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+  const handleConfirm = (date) => {
+    // console.log("date has been picked: ", date);
+    setExpense({ ...expense, purchaseDate: date.toString() });
+
+    hideDatePicker();
+  };
+
   const openPicker = async (selectType) => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes:
-        selectType === "image"
-          ? ImagePicker.MediaTypeOptions.Images
-          : ImagePicker.MediaTypeOptions.Videos,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 1,
     });
     if (!result.canceled) {
-      if (selectType === "image") {
-        setForm({ ...form, thumbnail: result.assets[0] });
-      }
-      if (selectType === "video") {
-        setForm({ ...form, video: result.assets[0] });
-      }
+      setExpense({ ...expense, image: result.assets[0] });
     }
   };
 
@@ -75,26 +83,24 @@ const Create = () => {
       setUploading(false);
     }
   };
+  // useEffect(() => {
+  //   // console.log(expense);
+  // }, [expense]);
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
         <Text className="text-2xl text-white font-psemibold">Add Expense</Text>
-        <FormField
-          title="Store"
-          value={expense.store}
-          placeholder="Store where purchase was made"
-          handleChangeText={(e) => setExpense({ ...expense, store: e })}
-          otherStyles="mt-10"
-        />
+
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 text-pmedium">
             Upload Receipt Image
           </Text>
-          <TouchableOpacity onPress={() => openPicker("image")}>
+          <TouchableOpacity onPress={() => openPicker()}>
             {expense.image ? (
               <Image
                 source={{ uri: expense.image.uri }}
-                className="w-full h-64 rounded-2xl"
+                className="w-full h-32 rounded-2xl"
                 resizeMode="cover"
               />
             ) : (
@@ -110,34 +116,66 @@ const Create = () => {
             )}
           </TouchableOpacity>
         </View>
-        <FormField
-          title="Sub Total"
-          value={expense.subTotal}
-          placeholder="Sub total of all items (before tax)"
-          handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
-          otherStyles="mt-7"
-        />
-        <FormField
-          title="Total"
-          value={expense.total}
-          placeholder="Total of all items (after tax)"
-          handleChangeText={(e) => setExpense({ ...expense, total: e })}
-          otherStyles="mt-7"
-        />
-        <FormField
-          title="Purchase Date"
-          value={expense.purchaseDate}
-          placeholder="Date when purchase was made"
-          handleChangeText={(e) => setExpense({ ...expense, purchaseDate: e })}
-          otherStyles="mt-7"
-        />
-        <FormField
-          title="Category"
-          value={expense.category}
-          placeholder="Category of purchase"
-          handleChangeText={(e) => setExpense({ ...expense, category: e })}
-          otherStyles="mt-7"
-        />
+        <View className="flex-row justify-between">
+          <FormField
+            title="Store"
+            value={expense.store}
+            // placeholder="Store where purchase was made"
+            handleChangeText={(e) => setExpense({ ...expense, store: e })}
+            otherStyles="mt-7 w-[45%]"
+          />
+          <FormField
+            title="Category"
+            value={expense.category}
+            // placeholder="Category of purchase"
+            handleChangeText={(e) => setExpense({ ...expense, category: e })}
+            otherStyles="mt-7 w-[45%]"
+          />
+        </View>
+        <View className="flex-row justify-between">
+          <FormField
+            title="Sub Total"
+            value={expense.subTotal}
+            placeholder="Before Tax"
+            handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
+            otherStyles="mt-7 w-[45%]"
+          />
+          <FormField
+            title="Total"
+            value={expense.total}
+            placeholder="After Tax"
+            handleChangeText={(e) => setExpense({ ...expense, total: e })}
+            otherStyles="mt-7 w-[45%]"
+          />
+        </View>
+        <View className="space-y-2 mt-7">
+          <Text className="text-base text-gray-100 font-pmedium">
+            Purchase Date
+          </Text>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row w-[50%] h-16 px-4 border-2 border-black-200 bg-black-100 rounded-2xl items-center ">
+              <Text className="flex-1 text-white font-psemibold text-base">
+                {expense.purchaseDate.substring(0, 10)}
+              </Text>
+            </View>
+
+            <CustomButton
+              title="Choose Date"
+              handlePress={showDatePicker}
+              containerStyles="w-[40%]"
+              isLoading={uploading}
+            />
+
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </View>
+        </View>
+        <LineItemList lineItems={lineItems} setLineItems={setLineItems} />
+
         <CustomButton
           title="Submit & Publish"
           handlePress={submit}
