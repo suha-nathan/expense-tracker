@@ -163,6 +163,7 @@ const Create = () => {
               title="Choose Date"
               handlePress={showDatePicker}
               containerStyles="w-[40%]"
+              textStyles="text-base"
               isLoading={uploading}
             />
 
@@ -177,7 +178,7 @@ const Create = () => {
         <LineItemList lineItems={lineItems} setLineItems={setLineItems} />
 
         <CustomButton
-          title="Submit & Publish"
+          title="Submit"
           handlePress={submit}
           containerStyles="mt-7"
           isLoading={uploading}

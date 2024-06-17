@@ -1,8 +1,7 @@
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import StatisticsBox from "../../components/StatisticsBox";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import TransactionList from "../../components/TransactionList";
 
