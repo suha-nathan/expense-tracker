@@ -1,5 +1,5 @@
 import { View, Text, Image } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -8,15 +8,8 @@ import TransactionList from "../../components/TransactionList";
 // scroll view doesnt support horizontal and vertical flat lists at the same time
 // therefore use a flatlist (horizontal) within the header component of a flatlist (vertical)
 const Home = () => {
-  const [refreshing, setRefreshing] = useState(false);
+  const { user } = useGlobalContext();
 
-  const { user, setUser, setIsLoggedIn } = useGlobalContext();
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  };
   return (
     <SafeAreaView className="bg-primary h-full">
       {/* Header */}

@@ -29,6 +29,10 @@ const TransactionList = () => {
     onRefresh();
   }, [listTimeFrame]);
 
+  useEffect(() => {
+    onRefresh();
+  }, []);
+
   return (
     <FlatList
       data={filteredRecipts}

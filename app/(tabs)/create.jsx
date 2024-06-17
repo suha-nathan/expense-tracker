@@ -66,8 +66,6 @@ const Create = () => {
   };
 
   const submit = async () => {
-    console.log(expense);
-    console.log(lineItems);
     if (
       !expense.store ||
       !expense.category ||
