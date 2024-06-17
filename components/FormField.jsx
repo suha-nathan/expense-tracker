@@ -26,6 +26,7 @@ const FormField = ({
           secureTextEntry={title === "Password" && !showPassword}
           editable={props.editable === false ? false : true}
           selectTextOnFocus={props.selectTextOnFocus === false ? false : true}
+          keyboardType={props.keyboardType === "numeric" ? "numeric" : "text"}
         />
         {title == "Password" && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

@@ -8,6 +8,7 @@ import FormField from "./FormField";
 const LineItemList = ({ lineItems, setLineItems }) => {
   const handleAddPress = () => {
     let newItem = {
+      id: Date.now(),
       productName: "",
       price: 0,
       quantity: 0,
@@ -15,10 +16,15 @@ const LineItemList = ({ lineItems, setLineItems }) => {
     setLineItems([...lineItems, newItem]);
   };
 
-  const handleRemovePress = (element) => {
-    console.log(element);
+  const handleRemovePress = (id) => {
+    setLineItems(lineItems.filter((lineItem) => lineItem.id != id));
+  };
+
+  const handleLineItemChange = (id, field, value) => {
     setLineItems(
-      lineItems.filter((lineItem) => lineItem.productName != target)
+      lineItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
     );
   };
 
@@ -27,18 +33,23 @@ const LineItemList = ({ lineItems, setLineItems }) => {
       <Text className="text-xl text-white font-psemibold mt-7">
         Items in Expense
       </Text>
-      {lineItems.map((item, index) => {
+      {lineItems.map((item) => {
         return (
-          <View key={index} className="mt-7">
+          <View key={item.id} className="mt-7">
             <View className="flex-row justify-centerx items-center">
               <FormField
                 title="Product Name"
                 value={item.productName}
-                // placeholder="Store where purchase was made"
-                handleChangeText={(e) => setExpense({ ...expense, store: e })}
+                handleChangeText={(text) =>
+                  handleLineItemChange(item.id, "productName", text)
+                }
                 otherStyles="w-[80%] mr-4"
               />
-              <TouchableOpacity onPress={handleRemovePress}>
+              <TouchableOpacity
+                onPress={() => {
+                  handleRemovePress(item.id);
+                }}
+              >
                 <FontAwesomeIcon icon={faCircleMinus} color="red" size={30} />
               </TouchableOpacity>
             </View>
@@ -46,16 +57,20 @@ const LineItemList = ({ lineItems, setLineItems }) => {
               <FormField
                 title="Price"
                 value={item.price}
-                // placeholder="Category of purchase"
-                // handleChangeText={(e) => setExpense({ ...expense, category: e })}
+                handleChangeText={(text) =>
+                  handleLineItemChange(item.id, "price", text)
+                }
                 otherStyles="w-[45%]"
+                keyboardType="numeric"
               />
               <FormField
                 title="Quantity"
-                value={item.price}
-                // placeholder="Category of purchase"
-                // handleChangeText={(e) => setExpense({ ...expense, category: e })}
+                value={item.quantity}
+                handleChangeText={(text) =>
+                  handleLineItemChange(item.id, "quantity", text)
+                }
                 otherStyles="w-[45%]"
+                keyboardType="numeric"
               />
             </View>
           </View>

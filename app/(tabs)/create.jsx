@@ -35,6 +35,7 @@ const Create = () => {
   });
   const [lineItems, setLineItems] = useState([
     {
+      id: Date.now(),
       productName: "",
       price: 0,
       quantity: 0,
@@ -67,25 +68,23 @@ const Create = () => {
   };
 
   const submit = async () => {
-    if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
-      Alert.alert("Please fill in all the fields");
-    }
-    setUploading(true);
-    try {
-      await createVideo({ ...form, userId: user.$id });
+    console.log(lineItems);
+    // if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
+    //   Alert.alert("Please fill in all the fields");
+    // }
+    // setUploading(true);
+    // try {
+    //   await createVideo({ ...form, userId: user.$id });
 
-      Alert.alert("success", "Post uploaded successfully");
-      router.push("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setForm({ title: "", video: null, thumbnail: null, prompt: "" });
-      setUploading(false);
-    }
+    //   Alert.alert("success", "Post uploaded successfully");
+    //   router.push("/home");
+    // } catch (error) {
+    //   Alert.alert("Error", error.message);
+    // } finally {
+    //   setForm({ title: "", video: null, thumbnail: null, prompt: "" });
+    //   setUploading(false);
+    // }
   };
-  // useEffect(() => {
-  //   // console.log(expense);
-  // }, [expense]);
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -139,6 +138,7 @@ const Create = () => {
             placeholder="Before Tax"
             handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
             otherStyles="mt-7 w-[45%]"
+            keyboardType="numeric"
           />
           <FormField
             title="Total"
@@ -146,6 +146,7 @@ const Create = () => {
             placeholder="After Tax"
             handleChangeText={(e) => setExpense({ ...expense, total: e })}
             otherStyles="mt-7 w-[45%]"
+            keyboardType="numeric"
           />
         </View>
         <View className="space-y-2 mt-7">
