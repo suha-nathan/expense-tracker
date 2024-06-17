@@ -38,7 +38,7 @@ const LineItemList = ({ lineItems, setLineItems }) => {
           <View key={item.id} className="mt-7">
             <View className="flex-row justify-centerx items-center">
               <FormField
-                title="Product Name"
+                title="Item Name"
                 value={item.productName}
                 handleChangeText={(text) =>
                   handleLineItemChange(item.id, "productName", text)
@@ -79,11 +79,13 @@ const LineItemList = ({ lineItems, setLineItems }) => {
 
       <View className="w-full">
         <TouchableOpacity
-          className="flex-row justify-center items-center mt-7"
+          className="flex-row justify-center items-center mt-3"
           onPress={handleAddPress}
         >
           <FontAwesomeIcon icon={faCirclePlus} color="green" size={30} />
-          <Text className="text-white font-pextralight">Add Expense Item</Text>
+          <Text className="text-white font-pextralight ml-2">
+            Add Expense Item
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

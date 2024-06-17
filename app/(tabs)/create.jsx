@@ -6,16 +6,15 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
 import { faUpload } from "@fortawesome/free-solid-svg-icons/faUpload";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-import { createVideo } from "../../lib/appwrite";
+import { createExpense } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
@@ -52,7 +51,6 @@ const Create = () => {
   const handleConfirm = (date) => {
     // console.log("date has been picked: ", date);
     setExpense({ ...expense, purchaseDate: date.toString() });
-
     hideDatePicker();
   };
 
@@ -68,22 +66,46 @@ const Create = () => {
   };
 
   const submit = async () => {
+    console.log(expense);
     console.log(lineItems);
-    // if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
-    //   Alert.alert("Please fill in all the fields");
-    // }
-    // setUploading(true);
-    // try {
-    //   await createVideo({ ...form, userId: user.$id });
+    if (
+      !expense.store ||
+      !expense.category ||
+      !expense.total ||
+      !expense.subTotal
+    ) {
+      Alert.alert("Please fill in all the expense fields");
+    } else if (
+      lineItems.length > 0 &&
+      lineItems.find(
+        (item) => item.productName === "" || !item.price || !item.quantity
+      )
+    ) {
+      Alert.alert(
+        "Please enter all details for all items in expense or remove item from expense"
+      );
+    } else {
+      setUploading(true);
+      try {
+        await createExpense({ ...expense, userId: user.$id }, lineItems);
 
-    //   Alert.alert("success", "Post uploaded successfully");
-    //   router.push("/home");
-    // } catch (error) {
-    //   Alert.alert("Error", error.message);
-    // } finally {
-    //   setForm({ title: "", video: null, thumbnail: null, prompt: "" });
-    //   setUploading(false);
-    // }
+        Alert.alert("success", "Expense uploaded successfully");
+        router.push("/home");
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      } finally {
+        setExpense({
+          store: "",
+          image: null,
+          subTotal: 0,
+          total: 0,
+          purchaseDate: "",
+          category: "",
+        });
+        setLineItems([]);
+        setUploading(false);
+      }
+    }
   };
 
   return (
