@@ -16,7 +16,7 @@ const Home = () => {
       <View className="justify-start items-start flex-row my-6 px-4 ">
         <View className="w-16 h-16 border-2 border-lightblue rounded-full justify-center items-center">
           <Image
-            source={{ uri: user.avatar }}
+            source={{ uri: user?.avatar }}
             className="w-[90%] h-[90%] rounded-full"
           />
         </View>

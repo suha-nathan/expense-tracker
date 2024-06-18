@@ -6,8 +6,9 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";

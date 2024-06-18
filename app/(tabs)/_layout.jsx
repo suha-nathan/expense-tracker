@@ -8,8 +8,9 @@ import { faHouse } from "@fortawesome/free-solid-svg-icons/faHouse";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons/faBookmark";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-library.add(fab, faHouse, faBookmark, faPlus, faUser);
+library.add(fab, faHouse, faBookmark, faPlus, faUser, faMagnifyingGlass);
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -62,15 +63,15 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="bookmark"
+          name="search"
           options={{
-            title: "Bookmark",
+            title: "Search",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon="bookmark"
+                icon="magnifying-glass"
                 color={color}
-                name="Bookmark"
+                name="Search"
                 focused={focused}
               />
             ),
