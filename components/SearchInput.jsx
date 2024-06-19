@@ -26,13 +26,19 @@ const SearchInput = ({
       <TouchableOpacity
         onPress={() => {
           if (!query) {
+            console.log("no query");
             return Alert.alert(
               "Missing Query",
               "Please input something to search for videos"
             );
           }
-          if (pathname.startsWith("/search")) router.setParams({ query });
-          else router.push(`/search/${query}`);
+          if (pathname.startsWith("/search")) {
+            console.log("pathname is ", pathname);
+            return router.setParams({ query });
+          } else {
+            console.log("searching");
+            return router.push(`/search/${query}`);
+          }
         }}
       >
         <FontAwesomeIcon

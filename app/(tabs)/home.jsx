@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useGlobalContext } from "../../context/GlobalProvider";
 import TransactionList from "../../components/TransactionList";
+import SearchInput from "../../components/SearchInput";
 
 // scroll view doesnt support horizontal and vertical flat lists at the same time
 // therefore use a flatlist (horizontal) within the header component of a flatlist (vertical)
@@ -27,7 +28,7 @@ const Home = () => {
           </Text>
         </View>
       </View>
-
+      <SearchInput />
       {/* List of transactions and Buttons to filter list */}
       <TransactionList />
     </SafeAreaView>
