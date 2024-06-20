@@ -3,15 +3,22 @@ import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 
-import { searchPosts } from "../../lib/appwrite";
+import { searchProducts } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
 import SearchInput from "../../components/SearchInput";
 import EmptyState from "../../components/EmptyState";
-import VideoCard from "../../components/VideoCard";
+
+const SearchCard = ({ item }) => {
+  return (
+    <View className="bg-secondary w-[25%] h-auto my-2 rounded-3xl px-1 py-2 items-center justify-center">
+      <Text className="text-white font-pmedium ">{item.productName}</Text>
+    </View>
+  );
+};
 
 const Search = ({ initialQuery }) => {
   const { query } = useLocalSearchParams();
-  const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
+  const { data: products, refetch } = useAppwrite(() => searchProducts(query));
 
   useEffect(() => {
     refetch();
@@ -20,9 +27,9 @@ const Search = ({ initialQuery }) => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={posts}
+        data={products}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <VideoCard video={item} />}
+        renderItem={({ item }) => <SearchCard item={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4">
             <Text className="font-pmedium text-sm text-gray-100">
@@ -36,10 +43,16 @@ const Search = ({ initialQuery }) => {
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No Videos Found"
-            subtitle="No videos found for this search query"
+            title="No Products Found"
+            subtitle="No products found for this search query"
           />
         )}
+        horizontal={false}
+        numColumns={3}
+        columnWrapperStyle={{
+          flex: 1,
+          justifyContent: "space-evenly",
+        }}
       />
     </SafeAreaView>
   );
