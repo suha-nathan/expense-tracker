@@ -12,7 +12,6 @@ const SearchCard = ({ item }) => {
   const pathname = usePathname();
 
   const handlePress = () => {
-    // console.log(item.$id);
     router.push(`search/product-detail/${item.$id}`);
   };
 
