@@ -14,7 +14,7 @@ library.add(fab, faHouse, faBookmark, faPlus, faUser, faMagnifyingGlass);
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="flex items-center justify-center gap-1">
+    <View className="flex items-center justify-center gap-1 mt-2">
       <FontAwesomeIcon
         icon={icon}
         resizeMode="contain"
@@ -106,6 +106,12 @@ const TabsLayout = () => {
                 focused={focused}
               />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name="expense-detail/[id]"
+          options={{
+            href: null,
           }}
         />
       </Tabs>

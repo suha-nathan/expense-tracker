@@ -21,18 +21,29 @@ import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import LineItemList from "../../components/LineItemList";
 
-const Create = () => {
+const Create = ({ expenseInfo, method }) => {
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [expense, setExpense] = useState({
-    store: "",
-    image: null,
-    subTotal: 0,
-    total: 0,
-    purchaseDate: "",
-    category: "",
-  });
+  const [expense, setExpense] = useState(
+    expenseInfo
+      ? {
+          store: expense.store,
+          image: expense.image,
+          subTotal: expense.subTotal,
+          total: expense.total,
+          purchaseDate: expense.purchaseDate,
+          category: expense.category,
+        }
+      : {
+          store: "",
+          image: null,
+          subTotal: 0,
+          total: 0,
+          purchaseDate: "",
+          category: "",
+        }
+  );
   const [lineItems, setLineItems] = useState([
     {
       id: Date.now(),

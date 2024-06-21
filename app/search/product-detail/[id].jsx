@@ -12,16 +12,28 @@ const ProductDetail = () => {
   });
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <Text>ProductDetail</Text>
-      <Image
-        source={{ uri: item.itemImage }}
-        className="w-full h-[80px] my-3"
-        resizeMode="contain"
-      />
-      <View className="mx-auto my-1">
-        <Text className="text-white font-pmedium text-md">
-          {item.productName}
+    <SafeAreaView className="bg-primary h-full p-4">
+      <Text className="text-white font-pregular text-xl mx-auto">
+        {item.productName}
+      </Text>
+      <View className="w-[50%] h-[25%] my-3 mx-auto border-2 border-white-20">
+        <Image
+          source={{ uri: item.itemImage }}
+          className="h-full"
+          resizeMode="contain"
+        />
+      </View>
+      <View className="w-[80%] mx-auto my-1 px-3 flex-row justify-between">
+        <Text className="text-white text-lg font-pregular">
+          Price: ${item.price}
+        </Text>
+        <Text className="text-white text-lg font-pregular">
+          Unit: {item.pricePerUnit}
+        </Text>
+      </View>
+      <View className="mx-auto my-1 px-3">
+        <Text className="text-white text-md font-plight">
+          {item.productDesc}
         </Text>
       </View>
     </SafeAreaView>

@@ -1,8 +1,17 @@
-import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import useAppwrite from "../lib/useAppwrite";
 import { getUserReceipts } from "../lib/appwrite";
-import { useGlobalContext } from "../context/GlobalProvider";
 import { useEffect, useState } from "react";
+import { router } from "expo-router";
+
+import { useGlobalContext } from "../context/GlobalProvider";
 import ButtonItem from "./ButtonItem";
 import { images } from "../constants";
 import StatisticsBox from "./StatisticsBox";
@@ -42,13 +51,17 @@ const TransactionList = () => {
         let dateObj = new Date(item.purchaseDate);
         let dateString = dateObj.toDateString();
         return (
-          <View
-            className="w-[90%] h-[100px] mx-auto flex-row items-center bg-secondary 
-          border-white-20 border-2 rounded-full mt-2"
+          <TouchableOpacity
+            className="w-[90%] h-[100px] mx-auto flex-row items-center 
+            bg-secondary border-white-20 border-2 rounded-full mt-2"
+            onPress={() => router.push(`(tabs)/expense-detail/${item.$id}`)}
           >
             <View className="w-[80%] flex-row justify-between">
               <View className="w-[70%] mx-4 flex-row items-center justify-center ">
-                <View className="w-16 h-16 mr-8 rounded-full mx- bg-white justify-center items-center">
+                <View
+                  className="w-16 h-16 mr-8 rounded-full 
+                bg-white justify-center items-center"
+                >
                   <Image
                     source={images.grocery}
                     className="w-4/6 h-4/6"
@@ -71,7 +84,7 @@ const TransactionList = () => {
                 {item.total}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
         );
       }}
       ListHeaderComponent={
