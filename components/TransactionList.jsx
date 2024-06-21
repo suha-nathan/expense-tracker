@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import ButtonItem from "./ButtonItem";
 import { images } from "../constants";
 import StatisticsBox from "./StatisticsBox";
+import SearchInput from "./SearchInput";
 
 const TransactionList = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -41,7 +42,10 @@ const TransactionList = () => {
         let dateObj = new Date(item.purchaseDate);
         let dateString = dateObj.toDateString();
         return (
-          <View className="w-[90%] h-[100px] mx-auto flex-row items-center bg-secondary border-white-20 border-2 rounded-full my-2">
+          <View
+            className="w-[90%] h-[100px] mx-auto flex-row items-center bg-secondary 
+          border-white-20 border-2 rounded-full mt-2"
+          >
             <View className="w-[80%] flex-row justify-between">
               <View className="w-[70%] mx-4 flex-row items-center justify-center ">
                 <View className="w-16 h-16 mr-8 rounded-full mx- bg-white justify-center items-center">
@@ -71,12 +75,20 @@ const TransactionList = () => {
         );
       }}
       ListHeaderComponent={
-        // {/* Chart and Buttons to change chart */}
         <>
+          {/* Search Bar */}
+          <View className="w-[90%] mx-auto h-auto mb-4">
+            <Text className="text-white font-pregular text-xl mb-2">
+              Search for grocery items:
+            </Text>
+            <SearchInput />
+          </View>
+
+          {/* Chart and Buttons to change chart */}
           <StatisticsBox />
 
-          {/* Buttons and header to filter list */}
-          <View className="w-[90%] flex-row my-2 mx-auto justify-center items-center">
+          {/* transactions list and buttons to filter list */}
+          <View className="w-[90%] flex-row mx-auto justify-center items-center">
             <View className="w-1/2 h-20 justify-center items-center ">
               <Text className="text-white font-pextrabold text-xl">
                 Transactions
