@@ -1,7 +1,7 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, usePathname } from "expo-router";
 
 import { searchProducts } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
@@ -9,10 +9,45 @@ import SearchInput from "../../components/SearchInput";
 import EmptyState from "../../components/EmptyState";
 
 const SearchCard = ({ item }) => {
+  const pathname = usePathname();
+
+  const handlePress = () => {
+    // console.log(item.$id);
+    router.push(`search/product-detail/${item.$id}`);
+  };
+
   return (
-    <View className="bg-secondary w-[25%] h-auto my-2 rounded-3xl px-1 py-2 items-center justify-center">
-      <Text className="text-white font-pmedium ">{item.productName}</Text>
-    </View>
+    <TouchableOpacity
+      className="bg-secondary w-[35%] h-[30vh] my-2 rounded-3xl px-2 py-3 
+    items-start border-white-20 border-2"
+      onPress={handlePress}
+    >
+      <Text className="text-white font-extralight text-md">{item.store}</Text>
+      <Image
+        source={{ uri: item.itemImage }}
+        className="w-full h-[80px] my-3"
+        resizeMode="contain"
+      />
+      <View className="mx-auto my-1">
+        <Text
+          className="text-white font-pmedium text-md"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {item.productName}
+        </Text>
+        <Text className="text-white font-light text-sm">
+          Price: ${item.price}
+        </Text>
+        <Text
+          className="text-white font-light text-xs"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          Unit: {item.pricePerUnit ? item.pricePerUnit : ""}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -36,7 +71,7 @@ const Search = ({ initialQuery }) => {
               Search Results
             </Text>
             <Text className="text-2xl font-psemibold text-white">{query}</Text>
-            <View className="mt-6 mb-8">
+            <View className="mt-6 mb-4">
               <SearchInput initialQuery={query} />
             </View>
           </View>
@@ -48,7 +83,7 @@ const Search = ({ initialQuery }) => {
           />
         )}
         horizontal={false}
-        numColumns={3}
+        numColumns={2}
         columnWrapperStyle={{
           flex: 1,
           justifyContent: "space-evenly",

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router, usePathname } from "expo-router";
 import { View, TouchableOpacity, TextInput, Alert } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons/faMagnifyingGlass";
+import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 
 const SearchInput = ({ initialQuery }) => {
   const pathname = usePathname();
@@ -13,30 +14,47 @@ const SearchInput = ({ initialQuery }) => {
       <TextInput
         className="text-base mt-0.5 text-white flex-1 font-pregular"
         value={query}
-        placeholder="Search for a product"
+        placeholder="e.g. chicken"
         placeholderTextColor="#CDCDE0"
         onChangeText={(e) => setQuery(e)}
       />
+      <View className="flex-row w-[25%] h-full justify-between items-center">
+        <TouchableOpacity
+          className="mx-2"
+          onPress={() => {
+            setQuery("");
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faX}
+            // style={{ marginRight: 6 }}
+            resizeMode="contain"
+            color="grey"
+            size={20}
+          />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => {
-          if (query === "")
-            return Alert.alert(
-              "Missing Query",
-              "Please input something to search results across database"
-            );
+        <TouchableOpacity
+          className="h-full flex-row items-center ml-2 px-3 border-l border-secondary"
+          onPress={() => {
+            if (query === "")
+              return Alert.alert(
+                "Missing Query",
+                "Please input something to search results across database"
+              );
 
-          if (pathname.startsWith("/search")) router.setParams({ query });
-          else router.push(`/search/${query}`);
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faMagnifyingGlass}
-          resizeMode="contain"
-          color="white"
-          size={20}
-        />
-      </TouchableOpacity>
+            if (pathname.startsWith("/search")) router.setParams({ query });
+            else router.push(`/search/${query}`);
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            resizeMode="contain"
+            color="grey"
+            size={20}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
