@@ -21,7 +21,7 @@ import FormField from "./FormField";
 import CustomButton from "./CustomButton";
 import LineItemList from "./LineItemList";
 
-const ImageChooser = (image) => {
+const ImageChooser = ({ image, openPicker }) => {
   return (
     <TouchableOpacity onPress={() => openPicker()}>
       {image ? (
@@ -152,7 +152,7 @@ const ExpenseForm = ({ expenseInfo, method }) => {
                 Upload Receipt Image
               </Text>
 
-              <ImageChooser image={expense.image} />
+              <ImageChooser image={expense.image} openPicker={openPicker} />
             </>
           ) : (
             <>
@@ -240,7 +240,7 @@ const ExpenseForm = ({ expenseInfo, method }) => {
           </View>
         </View>
         <LineItemList
-          lineItems={lineItems ? lineItems : null}
+          lineItems={lineItems}
           setLineItems={setLineItems}
           method={method}
           editable={method === "Create"}
