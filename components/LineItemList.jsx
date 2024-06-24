@@ -49,7 +49,7 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
               }
               otherStyles="w-[80%] mr-4"
             />
-            {method == "Create" ? (
+            {props.editable ? (
               <TouchableOpacity
                 onPress={() => {
                   handleRemovePress(item.id);
@@ -83,7 +83,7 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
           </View>
         </View>
       ))}
-      {method === "Create" ? (
+      {props.editable ? (
         <View className="w-full">
           <TouchableOpacity
             className="flex-row justify-center items-center mt-3"

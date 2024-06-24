@@ -7,7 +7,6 @@ import {
   Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -15,7 +14,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { faUpload } from "@fortawesome/free-solid-svg-icons/faUpload";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-import { createExpense } from "../lib/appwrite";
+import { createExpense, updateExpenseByID } from "../lib/appwrite";
 import { useGlobalContext } from "../context/GlobalProvider";
 import FormField from "./FormField";
 import CustomButton from "./CustomButton";
@@ -45,7 +44,7 @@ const ImageChooser = ({ image, openPicker }) => {
   );
 };
 
-const ExpenseForm = ({ expenseInfo, method }) => {
+const ExpenseForm = ({ expenseInfo, method, setViewState }) => {
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -67,11 +66,13 @@ const ExpenseForm = ({ expenseInfo, method }) => {
   };
 
   const openPicker = async () => {
+    console.log("opening picker");
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 1,
     });
+    console.log(result);
     if (!result.canceled) {
       setExpense({ ...expense, image: result.assets[0] });
     }
@@ -86,8 +87,8 @@ const ExpenseForm = ({ expenseInfo, method }) => {
     ) {
       Alert.alert("Please fill in all the expense fields");
     } else if (
-      lineItems.length > 0 &&
-      lineItems.find(
+      lineItems?.length > 0 &&
+      lineItems?.find(
         (item) => item.productName === "" || !item.price || !item.quantity
       )
     ) {
@@ -97,8 +98,11 @@ const ExpenseForm = ({ expenseInfo, method }) => {
     } else {
       setUploading(true);
       try {
-        await createExpense({ ...expense, userId: user.$id }, lineItems);
-
+        if (method === "Edit") {
+          await updateExpenseByID(expenseInfo.$id, expense, lineItems);
+        } else {
+          await createExpense({ ...expense, userId: user.$id }, lineItems);
+        }
         Alert.alert("success", "Expense uploaded successfully");
         router.push("/home");
       } catch (error) {
@@ -114,6 +118,7 @@ const ExpenseForm = ({ expenseInfo, method }) => {
         });
         setLineItems([]);
         setUploading(false);
+        setViewState ? setViewState("View") : null;
       }
     }
   };
@@ -129,6 +134,7 @@ const ExpenseForm = ({ expenseInfo, method }) => {
       purchaseDate: expenseInfo.purchaseDate,
       category: expenseInfo.category,
     });
+
     let arr = expenseInfo.lineItem?.map((item) => ({
       id: item.$id,
       productName: item.productName,
@@ -139,123 +145,117 @@ const ExpenseForm = ({ expenseInfo, method }) => {
   }, [expenseInfo]);
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView className="px-4 my-6">
-        <Text className="text-2xl text-white font-psemibold">
-          {method} Expense
-        </Text>
+    <>
+      <View className="mt-7 space-y-2">
+        {method === "Create" || method === "Edit" ? (
+          <>
+            <Text className="text-base text-gray-100 text-pmedium">
+              Upload Receipt Image
+            </Text>
 
-        <View className="mt-7 space-y-2">
-          {method === "Create" ? (
-            <>
-              <Text className="text-base text-gray-100 text-pmedium">
-                Upload Receipt Image
-              </Text>
-
-              <ImageChooser image={expense.image} openPicker={openPicker} />
-            </>
-          ) : (
-            <>
-              {expense.image ? (
-                <>
-                  <Text className="text-base text-gray-100 text-pmedium">
-                    Receipt Image
-                  </Text>
-                  <Image
-                    source={{ uri: expense.image }}
-                    className="w-full h-32 rounded-2xl"
-                    resizeMode="cover"
-                  />
-                </>
-              ) : null}
-            </>
-          )}
-        </View>
-        <View className="flex-row justify-between">
-          <FormField
-            title="Store"
-            value={expense.store}
-            editable={method === "Create"}
-            // placeholder="Store where purchase was made"
-            handleChangeText={(e) => setExpense({ ...expense, store: e })}
-            otherStyles="mt-7 w-[45%]"
-          />
-          <FormField
-            title="Category"
-            value={expense.category}
-            editable={method === "Create"}
-            // placeholder="Category of purchase"
-            handleChangeText={(e) => setExpense({ ...expense, category: e })}
-            otherStyles="mt-7 w-[45%]"
-          />
-        </View>
-        <View className="flex-row justify-between">
-          <FormField
-            title="Sub Total"
-            value={expense.subTotal}
-            placeholder="Before Tax"
-            editable={method === "Create"}
-            handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
-            otherStyles="mt-7 w-[45%]"
-            keyboardType="numeric"
-          />
-          <FormField
-            title="Total"
-            value={expense.total}
-            placeholder="After Tax"
-            editable={method === "Create"}
-            handleChangeText={(e) => setExpense({ ...expense, total: e })}
-            otherStyles="mt-7 w-[45%]"
-            keyboardType="numeric"
-          />
-        </View>
-        <View className="space-y-2 mt-7">
-          <Text className="text-base text-gray-100 font-pmedium">
-            Purchase Date
-          </Text>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row w-[50%] h-16 px-4 border-2 border-black-200 bg-black-100 rounded-2xl items-center ">
-              <Text className="flex-1 text-white font-psemibold text-base">
-                {expense?.purchaseDate?.substring(0, 10)}
-              </Text>
-            </View>
-            {method === "Create" ? (
+            <ImageChooser image={expense.image} openPicker={openPicker} />
+          </>
+        ) : (
+          <>
+            {expense.image ? (
               <>
-                <CustomButton
-                  title="Choose Date"
-                  handlePress={showDatePicker}
-                  containerStyles="w-[40%]"
-                  textStyles="text-base"
-                  isLoading={uploading}
-                />
-
-                <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={handleConfirm}
-                  onCancel={hideDatePicker}
+                <Text className="text-base text-gray-100 text-pmedium">
+                  Receipt Image
+                </Text>
+                <Image
+                  source={{ uri: expense.image }}
+                  className="w-full h-32 rounded-2xl"
+                  resizeMode="cover"
                 />
               </>
             ) : null}
-          </View>
-        </View>
-        <LineItemList
-          lineItems={lineItems}
-          setLineItems={setLineItems}
-          method={method}
-          editable={method === "Create"}
+          </>
+        )}
+      </View>
+      <View className="flex-row justify-between">
+        <FormField
+          title="Store"
+          value={expense.store}
+          editable={method === "Create" || method === "Edit"}
+          // placeholder="Store where purchase was made"
+          handleChangeText={(e) => setExpense({ ...expense, store: e })}
+          otherStyles="mt-7 w-[45%]"
         />
+        <FormField
+          title="Category"
+          value={expense.category}
+          editable={method === "Create" || method === "Edit"}
+          // placeholder="Category of purchase"
+          handleChangeText={(e) => setExpense({ ...expense, category: e })}
+          otherStyles="mt-7 w-[45%]"
+        />
+      </View>
+      <View className="flex-row justify-between">
+        <FormField
+          title="Sub Total"
+          value={expense.subTotal}
+          placeholder="Before Tax"
+          editable={method === "Create" || method === "Edit"}
+          handleChangeText={(e) => setExpense({ ...expense, subTotal: e })}
+          otherStyles="mt-7 w-[45%]"
+          keyboardType="numeric"
+        />
+        <FormField
+          title="Total"
+          value={expense.total}
+          placeholder="After Tax"
+          editable={method === "Create" || method === "Edit"}
+          handleChangeText={(e) => setExpense({ ...expense, total: e })}
+          otherStyles="mt-7 w-[45%]"
+          keyboardType="numeric"
+        />
+      </View>
+      <View className="space-y-2 mt-7">
+        <Text className="text-base text-gray-100 font-pmedium">
+          Purchase Date
+        </Text>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row w-[50%] h-16 px-4 border-2 border-black-200 bg-black-100 rounded-2xl items-center ">
+            <Text className="flex-1 text-white font-psemibold text-base">
+              {expense?.purchaseDate?.substring(0, 10)}
+            </Text>
+          </View>
+          {method === "Create" || method === "Edit" ? (
+            <>
+              <CustomButton
+                title="Choose Date"
+                handlePress={showDatePicker}
+                containerStyles="w-[40%]"
+                textStyles="text-base"
+                isLoading={uploading}
+              />
 
-        {method === "Create" ? (
-          <CustomButton
-            title="Submit"
-            handlePress={submit}
-            containerStyles="mt-7"
-            isLoading={uploading}
-          />
-        ) : null}
-      </ScrollView>
-    </SafeAreaView>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+            </>
+          ) : null}
+        </View>
+      </View>
+      <LineItemList
+        lineItems={lineItems}
+        setLineItems={setLineItems}
+        method={method}
+        editable={method === "Create" || method === "Edit"}
+      />
+
+      {method === "Create" || method === "Edit" ? (
+        <CustomButton
+          title="Submit"
+          handlePress={submit}
+          containerStyles="mt-7"
+          isLoading={uploading}
+        />
+      ) : null}
+    </>
   );
 };
 
