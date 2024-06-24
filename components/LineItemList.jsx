@@ -5,15 +5,22 @@ import { faCirclePlus } from "@fortawesome/free-solid-svg-icons/faCirclePlus";
 import { faCircleMinus } from "@fortawesome/free-solid-svg-icons/faCircleMinus";
 import FormField from "./FormField";
 
-const LineItemList = ({ lineItems, setLineItems }) => {
+const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
   const handleAddPress = () => {
+    console.log(lineItems);
+    console.log("handling add press");
     let newItem = {
       id: Date.now(),
       productName: "",
       price: 0,
       quantity: 0,
     };
-    setLineItems([...lineItems, newItem]);
+    if (!lineItems) {
+      setLineItems([newItem]);
+    } else {
+      setLineItems([...lineItems, newItem]);
+    }
+    console.log(lineItems);
   };
 
   const handleRemovePress = (id) => {
@@ -33,18 +40,19 @@ const LineItemList = ({ lineItems, setLineItems }) => {
       <Text className="text-xl text-white font-psemibold mt-7">
         Items in Expense
       </Text>
-      {lineItems.map((item) => {
-        return (
-          <View key={item.id} className="mt-7">
-            <View className="flex-row justify-centerx items-center">
-              <FormField
-                title="Item Name"
-                value={item.productName}
-                handleChangeText={(text) =>
-                  handleLineItemChange(item.id, "productName", text)
-                }
-                otherStyles="w-[80%] mr-4"
-              />
+      {lineItems?.map((item) => (
+        <View key={item.id} className="mt-7">
+          <View className="flex-row justify-centerx items-center">
+            <FormField
+              title="Item Name"
+              value={item.productName}
+              editable={props.editable}
+              handleChangeText={(text) =>
+                handleLineItemChange(item.id, "productName", text)
+              }
+              otherStyles="w-[80%] mr-4"
+            />
+            {method == "Create" ? (
               <TouchableOpacity
                 onPress={() => {
                   handleRemovePress(item.id);
@@ -52,42 +60,45 @@ const LineItemList = ({ lineItems, setLineItems }) => {
               >
                 <FontAwesomeIcon icon={faCircleMinus} color="red" size={30} />
               </TouchableOpacity>
-            </View>
-            <View className="w-full h-32 flex-row justify-between mt-3">
-              <FormField
-                title="Price"
-                value={item.price}
-                handleChangeText={(text) =>
-                  handleLineItemChange(item.id, "price", text)
-                }
-                otherStyles="w-[45%]"
-                keyboardType="numeric"
-              />
-              <FormField
-                title="Quantity"
-                value={item.quantity}
-                handleChangeText={(text) =>
-                  handleLineItemChange(item.id, "quantity", text)
-                }
-                otherStyles="w-[45%]"
-                keyboardType="numeric"
-              />
-            </View>
+            ) : null}
           </View>
-        );
-      })}
-
-      <View className="w-full">
-        <TouchableOpacity
-          className="flex-row justify-center items-center mt-3"
-          onPress={handleAddPress}
-        >
-          <FontAwesomeIcon icon={faCirclePlus} color="green" size={30} />
-          <Text className="text-white font-pextralight ml-2">
-            Add Expense Item
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <View className="w-full h-32 flex-row justify-between mt-3">
+            <FormField
+              title="Price"
+              value={item.price}
+              editable={props.editable}
+              handleChangeText={(text) =>
+                handleLineItemChange(item.id, "price", text)
+              }
+              otherStyles="w-[45%]"
+              keyboardType="numeric"
+            />
+            <FormField
+              title="Quantity"
+              value={item.quantity}
+              editable={props.editable}
+              handleChangeText={(text) =>
+                handleLineItemChange(item.id, "quantity", text)
+              }
+              otherStyles="w-[45%]"
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+      ))}
+      {method === "Create" ? (
+        <View className="w-full">
+          <TouchableOpacity
+            className="flex-row justify-center items-center mt-3"
+            onPress={handleAddPress}
+          >
+            <FontAwesomeIcon icon={faCirclePlus} color="green" size={30} />
+            <Text className="text-white font-pextralight ml-2">
+              Add Expense Item
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </View>
   );
 };
