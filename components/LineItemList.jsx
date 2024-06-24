@@ -7,8 +7,6 @@ import FormField from "./FormField";
 
 const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
   const handleAddPress = () => {
-    console.log(lineItems);
-    console.log("handling add press");
     let newItem = {
       id: Date.now(),
       productName: "",
@@ -20,7 +18,6 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
     } else {
       setLineItems([...lineItems, newItem]);
     }
-    console.log(lineItems);
   };
 
   const handleRemovePress = (id) => {
