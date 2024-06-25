@@ -121,7 +121,7 @@ const TransactionList = () => {
           <StatisticsBox />
 
           {/* transactions list and buttons to filter list */}
-          <View className="w-[90%] flex-row mx-auto justify-center items-center">
+          <View className="w-[90%] flex-row mx-auto mt-7 justify-center items-center">
             <View className="w-1/2 h-20 justify-center items-center ">
               <Text className="text-white font-pextrabold text-xl">
                 Transactions
