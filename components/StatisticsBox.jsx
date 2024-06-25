@@ -9,18 +9,33 @@ import ButtonItem from "./ButtonItem";
 const StatisticsBox = () => {
   const { user } = useGlobalContext();
   const [chartTimeFrame, setChartTimeFrame] = useState("Week"); //week month year
+  const [chartData, setChartData] = useState([]);
 
-  const { data: receipts, isLoading } = useAppwrite(() =>
-    getUserReceipts(user.$id, chartTimeFrame)
-  );
+  const {
+    data: receipts,
+    isLoading,
+    refetch,
+  } = useAppwrite(() => getUserReceipts(user.$id, chartTimeFrame));
 
-  let chartData = [];
-  if (!isLoading && receipts) {
-    chartData = receipts.map((item) => {
-      let date = new Date(item.purchaseDate);
-      return { date: date, total: item?.total };
-    });
-  }
+  const loadChartData = async () => {
+    await refetch();
+    if (!isLoading && receipts) {
+      let reversedReceipts = receipts.reverse();
+      let arr = reversedReceipts.map((item) => {
+        let date = new Date(item.purchaseDate);
+        return {
+          label: `${date.getDate()}/${date.getMonth() + 1}`,
+          value: item.total,
+        };
+      });
+      setChartData(arr);
+    }
+  };
+
+  useEffect(() => {
+    loadChartData();
+    // console.log("chart data is: ", chartData);
+  }, [chartTimeFrame]);
 
   return (
     <View className="flex h-[350px] justify-start items-center">
