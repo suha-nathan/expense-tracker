@@ -38,7 +38,6 @@ const TransactionList = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log(id);
     setDeleteDisabled(true);
     await deleteExpenseByID(id);
     onRefresh();

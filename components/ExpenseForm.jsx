@@ -21,11 +21,18 @@ import CustomButton from "./CustomButton";
 import LineItemList from "./LineItemList";
 
 const ImageChooser = ({ image, openPicker }) => {
+  const [isImageFromUser, setIsImageFromUser] = useState(false);
+
+  useEffect(() => {
+    if (typeof image === "string") setIsImageFromUser(false);
+    else if (typeof image === "object") setIsImageFromUser(true);
+  }, [image]);
+
   return (
     <TouchableOpacity onPress={() => openPicker()}>
       {image ? (
         <Image
-          source={{ uri: image.uri }}
+          source={isImageFromUser ? { uri: image.uri } : { uri: image }}
           className="w-full h-32 rounded-2xl"
           resizeMode="cover"
         />
@@ -60,19 +67,16 @@ const ExpenseForm = ({ expenseInfo, method, setViewState }) => {
     setDatePickerVisibility(false);
   };
   const handleConfirm = (date) => {
-    // console.log("date has been picked: ", date);
     setExpense({ ...expense, purchaseDate: date.toString() });
     hideDatePicker();
   };
 
   const openPicker = async () => {
-    console.log("opening picker");
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
     if (!result.canceled) {
       setExpense({ ...expense, image: result.assets[0] });
     }
