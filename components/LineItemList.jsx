@@ -7,8 +7,6 @@ import FormField from "./FormField";
 
 const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
   const handleAddPress = () => {
-    console.log(lineItems);
-    console.log("handling add press");
     let newItem = {
       id: Date.now(),
       productName: "",
@@ -20,7 +18,6 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
     } else {
       setLineItems([...lineItems, newItem]);
     }
-    console.log(lineItems);
   };
 
   const handleRemovePress = (id) => {
@@ -52,7 +49,7 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
               }
               otherStyles="w-[80%] mr-4"
             />
-            {method == "Create" ? (
+            {props.editable ? (
               <TouchableOpacity
                 onPress={() => {
                   handleRemovePress(item.id);
@@ -86,7 +83,7 @@ const LineItemList = ({ lineItems, setLineItems, method, ...props }) => {
           </View>
         </View>
       ))}
-      {method === "Create" ? (
+      {props.editable ? (
         <View className="w-full">
           <TouchableOpacity
             className="flex-row justify-center items-center mt-3"

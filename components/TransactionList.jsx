@@ -6,11 +6,13 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import useAppwrite from "../lib/useAppwrite";
-import { getUserReceipts } from "../lib/appwrite";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircleMinus } from "@fortawesome/free-solid-svg-icons/faCircleMinus";
 
+import useAppwrite from "../lib/useAppwrite";
+import { getUserReceipts, deleteExpenseByID } from "../lib/appwrite";
 import { useGlobalContext } from "../context/GlobalProvider";
 import ButtonItem from "./ButtonItem";
 import { images } from "../constants";
@@ -20,7 +22,7 @@ import SearchInput from "./SearchInput";
 const TransactionList = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [listTimeFrame, setListTimeFrame] = useState("W");
-
+  const [deleteDisabled, setDeleteDisabled] = useState(false);
   const { user } = useGlobalContext();
 
   const {
@@ -33,6 +35,13 @@ const TransactionList = () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
+  };
+
+  const handleDelete = async (id) => {
+    setDeleteDisabled(true);
+    await deleteExpenseByID(id);
+    onRefresh();
+    setDeleteDisabled(false);
   };
 
   useEffect(() => {
@@ -51,40 +60,51 @@ const TransactionList = () => {
         let dateObj = new Date(item.purchaseDate);
         let dateString = dateObj.toDateString();
         return (
-          <TouchableOpacity
-            className="w-[90%] h-[100px] mx-auto flex-row items-center 
+          <View className="w-full flex-row">
+            <TouchableOpacity
+              className="w-[85%] h-[100px] mx-auto flex-row items-center 
             bg-secondary border-white-20 border-2 rounded-full mt-2"
-            onPress={() => router.push(`(tabs)/expense-detail/${item.$id}`)}
-          >
-            <View className="w-[80%] flex-row justify-between">
-              <View className="w-[70%] mx-4 flex-row items-center justify-center ">
-                <View
-                  className="w-16 h-16 mr-8 rounded-full 
+              onPress={() => router.push(`(tabs)/expense-detail/${item.$id}`)}
+            >
+              <View className="w-[80%] flex-row justify-between">
+                <View className="w-[70%] mx-4 flex-row items-center justify-center ">
+                  <View
+                    className="w-16 h-16 mr-8 rounded-full 
                 bg-white justify-center items-center"
-                >
-                  <Image
-                    source={images.grocery}
-                    className="w-4/6 h-4/6"
-                    resizeMode="contain"
-                  />
-                </View>
+                  >
+                    <Image
+                      source={images.grocery}
+                      className="w-4/6 h-4/6"
+                      resizeMode="contain"
+                    />
+                  </View>
 
-                <View className="justify-center items-start  ">
-                  <Text className="text-white font-psemibold">
-                    {item.category}
-                  </Text>
-                  <Text className="text-white-50 font-light ">
-                    {dateString}
-                  </Text>
+                  <View className="justify-center items-start  ">
+                    <Text className="text-white font-psemibold">
+                      {item.category}
+                    </Text>
+                    <Text className="text-white-50 font-light ">
+                      {dateString}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            <View className=" ">
-              <Text className="text-base text-white font-pmedium justify-between items-center">
-                {item.total}
-              </Text>
-            </View>
-          </TouchableOpacity>
+              <View className=" ">
+                <Text className="text-base text-white font-pmedium justify-between items-center">
+                  {item.total}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center pr-3"
+              disabled={deleteDisabled}
+              onPress={() => {
+                handleDelete(item.$id);
+              }}
+            >
+              <FontAwesomeIcon icon={faCircleMinus} color="red" size={30} />
+            </TouchableOpacity>
+          </View>
         );
       }}
       ListHeaderComponent={
