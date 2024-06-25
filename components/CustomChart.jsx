@@ -17,21 +17,22 @@ const CustomChart = ({ chartData, timeFrame }) => {
     useShadowColorFromDataset: false, // optional
   };
   const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: chartData.labels,
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43],
+        // data: chartData.data,
+        data: [20, 45, 28, 80, 99, 43, 25, 25, 30, 75, 50, 55],
         color: (opacity = 1) => `rgba(13, 166, 194, ${opacity})`, // optional
         strokeWidth: 3, // optional
       },
     ],
   };
   return (
-    <View className="h-[70%] p-5 rounded-3xl bg-secondary mt-4 border-white-20 border-2">
+    <View className="h-[80%] p-5 rounded-3xl bg-secondary mt-4 border-white-20 border-2">
       <LineChart
         data={data}
         width={screenWidth * 0.8}
-        height={200}
+        height={250}
         verticalLabelRotation={30}
         chartConfig={chartConfig}
         bezier
