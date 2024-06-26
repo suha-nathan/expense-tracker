@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalProvider";
 import { getUserReceipts } from "../lib/appwrite";
-import useAppwrite from "../lib/useAppwrite";
 import CustomChart from "./CustomChart";
 import ButtonItem from "./ButtonItem";
 
@@ -44,17 +43,17 @@ const StatisticsBox = () => {
     return labels;
   };
 
-  const loadChartData = (timeFrame, receiptsInFn) => {
+  const loadChartData = (timeFrame, receipts) => {
     // generate labels for given time frame
     console.log(
       "within loadChartData",
       timeFrame,
-      receiptsInFn.map((item) => item.total)
+      receipts.map((item) => item.total)
     );
     let totalsInOrder = [];
     let labels = generateLabels();
 
-    if (receiptsInFn) {
+    if (receipts) {
       let currDate = new Date();
 
       if (timeFrame == "Week") {
@@ -62,8 +61,8 @@ const StatisticsBox = () => {
         let dailyTotals = Array(7).fill(0);
 
         // Iterate through receipts and add their totals to the corresponding day
-        receiptsInFn.forEach((item) => {
-          let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate);
           let daysAgo = Math.floor(
             (currDate - itemDate) / (1000 * 60 * 60 * 24)
           );
@@ -77,12 +76,11 @@ const StatisticsBox = () => {
         let weeklyTotals = [0, 0, 0, 0];
 
         // Iterate through receipts and add their totals to the corresponding week
-        receiptsInFn.forEach((item) => {
+        receipts.forEach((item) => {
           let itemDate = new Date(item.purchaseDate);
           let daysAgo = Math.floor(
             (currDate - itemDate) / (1000 * 60 * 60 * 24)
           );
-
           if (daysAgo < 7) {
             weeklyTotals[0] += item.total;
           } else if (daysAgo < 14) {
@@ -93,15 +91,15 @@ const StatisticsBox = () => {
             weeklyTotals[3] += item.total;
           }
         });
-        // console.log("timeframe: month. ", weeklyTotals);
+
         totalsInOrder = weeklyTotals;
       } else if (timeFrame === "Year") {
         //aggregate total by month and push to data
         let monthlyTotals = Array(12).fill(0);
 
         // Iterate through receipts and add their totals to the corresponding day
-        receiptsInFn.forEach((item) => {
-          let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate);
           let month = itemDate.getMonth();
           monthlyTotals[month] += item.total;
         });
@@ -114,20 +112,19 @@ const StatisticsBox = () => {
         }
       }
     }
-    // console.log({ labels, totalsInOrder });
     setChartData({ labels: labels, data: totalsInOrder });
   };
 
   const getR = async () => {
     setIsLoading(true);
     try {
-      let receiptsApp = await getUserReceipts(user.$id, chartTimeFrame);
+      let receiptsDB = await getUserReceipts(user.$id, chartTimeFrame);
       console.log(
         "within promise: ",
         chartTimeFrame,
-        receiptsApp.map((item) => item.total)
+        receiptsDB.map((item) => item.total)
       );
-      return receiptsApp;
+      return receiptsDB;
     } catch (error) {
       throw new Error(error);
     } finally {
@@ -135,14 +132,14 @@ const StatisticsBox = () => {
     }
   };
   useEffect(() => {
-    getR().then((receiptsInPromise) => {
-      loadChartData(chartTimeFrame, receiptsInPromise);
+    getR().then((result) => {
+      loadChartData(chartTimeFrame, result);
     });
   }, [chartTimeFrame]);
 
   useEffect(() => {
-    getR().then((receiptsInPromise) => {
-      loadChartData(chartTimeFrame, receiptsInPromise);
+    getR().then((result) => {
+      loadChartData(chartTimeFrame, result);
     });
   }, []);
   return (
