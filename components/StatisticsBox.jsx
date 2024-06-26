@@ -9,14 +9,15 @@ import ButtonItem from "./ButtonItem";
 const StatisticsBox = () => {
   const { user } = useGlobalContext();
   const [chartTimeFrame, setChartTimeFrame] = useState("Week"); //week month year
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState({});
+  const [receipts, setReceipts] = useState([{}]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    data: receipts,
-    isLoading,
-    refetch,
-  } = useAppwrite(() => getUserReceipts(user.$id, chartTimeFrame));
-
+  // const {
+  //   data: receipts,
+  //   isLoading,
+  //   refetch,
+  // } = useAppwrite(() => getUserReceipts(user.$id, chartTimeFrame));
   const numDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
   const generateLabels = () => {
@@ -49,23 +50,20 @@ const StatisticsBox = () => {
     return labels;
   };
 
-  const loadChartData = async () => {
-    // console.log("timeframe: ", chartTimeFrame);
-
+  const loadChartData = (timeFrame) => {
     // generate labels for given time frame
-    let data = {};
     let totalsInOrder = [];
     let labels = generateLabels();
 
-    if (!isLoading && receipts) {
+    if (receipts) {
       let currDate = new Date();
 
-      if (chartTimeFrame == "Week") {
+      if (timeFrame == "Week") {
         // Initialize an array to store totals for each day of the week
         let dailyTotals = Array(7).fill(0);
 
         // Iterate through receipts and add their totals to the corresponding day
-        reversedReceipts.forEach((item) => {
+        receipts.forEach((item) => {
           let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
           let daysAgo = Math.floor(
             (currDate - itemDate) / (1000 * 60 * 60 * 24)
@@ -76,7 +74,7 @@ const StatisticsBox = () => {
           }
         });
         totalsInOrder = dailyTotals;
-      } else if (chartTimeFrame === "Month") {
+      } else if (timeFrame === "Month") {
         let weeklyTotals = [0, 0, 0, 0];
 
         // Iterate through receipts and add their totals to the corresponding week
@@ -96,40 +94,54 @@ const StatisticsBox = () => {
             weeklyTotals[3] += item.total;
           }
         });
-        // Add the weekly totals in reverse order to match the current day-first order
+        // console.log("timeframe: month. ", weeklyTotals);
         totalsInOrder = weeklyTotals;
+      } else if (timeFrame === "Year") {
+        //aggregate total by month and push to data
+        let monthlyTotals = Array(12).fill(0);
+
+        // Iterate through receipts and add their totals to the corresponding day
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
+          let month = itemDate.getMonth();
+          monthlyTotals[month] += item.total;
+        });
+
+        //reorder the monthly totals to start from current month
+        let currMonth = currDate.getMonth();
+        for (let i = 0; i < 12; i++) {
+          let idx = (currMonth - i + 12) % 12;
+          totalsInOrder.push(monthlyTotals[idx]);
+        }
       }
-    } else if (chartTimeFrame === "Year") {
-      //aggregate total by month and push to data
-      let monthlyTotals = Array(12).fill(0);
-
-      // Iterate through receipts and add their totals to the corresponding day
-      reversedReceipts.forEach((item) => {
-        let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
-        let month = itemDate.getMonth();
-        monthlyTotals[month] += item.total;
-      });
-
-      //reorder the monthly totals to start from current month
-      let currMonth = currDate.getMonth();
-      let reorderedTotals = [];
-      for (let i = 0; i < 12; i++) {
-        let idx = (currMonth - i + 12) % 12;
-        reorderedTotals.push(monthlyTotals[idx]);
-      }
-
-      totalsInOrder = reorderedTotals;
     }
-
+    console.log({ labels, totalsInOrder });
     setChartData({ labels: labels, data: totalsInOrder });
   };
 
+  const getR = async () => {
+    setIsLoading(true);
+    try {
+      let receiptsApp = await getUserReceipts(user.$id, chartTimeFrame);
+      setReceipts(receiptsApp);
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    refetch();
-    loadChartData();
-    // console.log("chart data is: ", chartData);
+    getR().then(() => {
+      setChartData({});
+      loadChartData(chartTimeFrame);
+    });
   }, [chartTimeFrame]);
 
+  useEffect(() => {
+    getR().then(() => {
+      loadChartData(chartTimeFrame);
+    });
+  }, []);
   return (
     <View className="flex h-[350px] justify-start items-center">
       <View
@@ -155,7 +167,15 @@ const StatisticsBox = () => {
           isActive={chartTimeFrame === "Year"}
         />
       </View>
-      <CustomChart chartData={chartData} timeFrame={chartTimeFrame} />
+      {isLoading ? (
+        <View>
+          <Text className="text-white text-xl font-pextralight">
+            Loading~~~
+          </Text>
+        </View>
+      ) : (
+        <CustomChart chartData={chartData} timeFrame={chartTimeFrame} />
+      )}
     </View>
   );
 };

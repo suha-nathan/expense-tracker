@@ -20,7 +20,9 @@ const CustomChart = ({ chartData, timeFrame }) => {
     labels: chartData.labels,
     datasets: [
       {
-        data: chartData.data ? chartData.data : [],
+        data: chartData.data
+          ? chartData.data
+          : [20, 45, 28, 80, 99, 43, 25, 25, 30, 75, 50, 55],
         // data: [20, 45, 28, 80, 99, 43, 25, 25, 30, 75, 50, 55],
         color: (opacity = 1) => `rgba(13, 166, 194, ${opacity})`, // optional
         strokeWidth: 3, // optional
