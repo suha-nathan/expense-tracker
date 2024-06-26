@@ -61,20 +61,21 @@ const StatisticsBox = () => {
       let currDate = new Date();
 
       if (chartTimeFrame == "Week") {
-        //initialise all the week's date totals to zero. curr date is always the latest data
-        for (let i = 0; i < 7; i++) {
-          data[i] = 0;
-        }
-        //for each receipt, add it's total to the corresponding data key value pair
-        receipts.forEach((item) => {
-          let itemDate = new Date(item.purchaseDate);
-          data[itemDate.getDay()] += item.total;
+        // Initialize an array to store totals for each day of the week
+        let dailyTotals = Array(7).fill(0);
+
+        // Iterate through receipts and add their totals to the corresponding day
+        reversedReceipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
+          let daysAgo = Math.floor(
+            (currDate - itemDate) / (1000 * 60 * 60 * 24)
+          );
+
+          if (daysAgo < 7) {
+            dailyTotals[daysAgo] += item.total;
+          }
         });
-        for (let i = 0; i < 7; i++) {
-          // Calculate the day we want to get the total for
-          let day = (currDate.getDay() - i + 7) % 7;
-          totalsInOrder.push(data[day]);
-        }
+        totalsInOrder = dailyTotals;
       } else if (chartTimeFrame === "Month") {
         let weeklyTotals = [0, 0, 0, 0];
 
@@ -100,29 +101,26 @@ const StatisticsBox = () => {
       }
     } else if (chartTimeFrame === "Year") {
       //aggregate total by month and push to data
-      let monthlyTotals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      let monthlyTotals = Array(12).fill(0);
 
-      // // Iterate through receipts and add their totals to the corresponding week
-      // receipts.forEach((item) => {
-      //   let itemDate = new Date(item.purchaseDate);
-      //   let daysAgo = Math.floor(
-      //     (currDate - itemDate) / (1000 * 60 * 60 * 24)
-      //   );
+      // Iterate through receipts and add their totals to the corresponding day
+      reversedReceipts.forEach((item) => {
+        let itemDate = new Date(item.purchaseDate); // Assuming item.date is the date of the receipt
+        let month = itemDate.getMonth();
+        monthlyTotals[month] += item.total;
+      });
 
-      //   if (daysAgo < 7) {
-      //     weeklyTotals[0] += item.total;
-      //   } else if (daysAgo < 14) {
-      //     weeklyTotals[1] += item.total;
-      //   } else if (daysAgo < 21) {
-      //     weeklyTotals[2] += item.total;
-      //   } else if (daysAgo < 28) {
-      //     weeklyTotals[3] += item.total;
-      //   }
-      // });
-      // Add the weekly totals in reverse order to match the current day-first order
-      totalsInOrder = monthlyTotals;
+      //reorder the monthly totals to start from current month
+      let currMonth = currDate.getMonth();
+      let reorderedTotals = [];
+      for (let i = 0; i < 12; i++) {
+        let idx = (currMonth - i + 12) % 12;
+        reorderedTotals.push(monthlyTotals[idx]);
+      }
+
+      totalsInOrder = reorderedTotals;
     }
-    // console.log("totals in order", totalsInOrder);
+
     setChartData({ labels: labels, data: totalsInOrder });
   };
 
