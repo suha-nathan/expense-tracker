@@ -2,36 +2,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalProvider";
 import { getUserReceipts } from "../lib/appwrite";
-import useAppwrite from "../lib/useAppwrite";
 import CustomChart from "./CustomChart";
 import ButtonItem from "./ButtonItem";
 
 const StatisticsBox = () => {
   const { user } = useGlobalContext();
   const [chartTimeFrame, setChartTimeFrame] = useState("Week"); //week month year
-  const [chartData, setChartData] = useState([]);
-
-  const {
-    data: receipts,
-    isLoading,
-    refetch,
-  } = useAppwrite(() => getUserReceipts(user.$id, chartTimeFrame));
-  /* 
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(13, 166, 194, ${opacity})`, // optional
-        strokeWidth: 3, // optional
-      },
-    ],
-  };
-    let duration = numDays * 24 * 60 * 60 * 1000; //duration in milliseconds
-    let startDate = Date.now(); //current time in milliseconds
-    let endDate = new Date(startDate - duration);
-
-*/
+  const [chartData, setChartData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const numDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
@@ -65,33 +43,105 @@ const StatisticsBox = () => {
     return labels;
   };
 
-  const loadChartData = async () => {
-    await refetch();
-
+  const loadChartData = (timeFrame, receipts) => {
     // generate labels for given time frame
-    let data = [];
+    console.log(
+      "within loadChartData",
+      timeFrame,
+      receipts.map((item) => item.total)
+    );
+    let totalsInOrder = [];
     let labels = generateLabels();
-    if (!isLoading && receipts) {
-      let reversedReceipts = receipts.reverse();
-      reversedReceipts.forEach((item) => {
-        let date = new Date(item.purchaseDate);
-        if (chartTimeFrame == "Week") {
-          //aggregate total by day and push to data
-        } else if (chartTimeFrame === "Month") {
-          //aggregate total by week and push to data
-        } else if (chartTimeFrame === "Year") {
-          //aggrefate total by month and push to data
+
+    if (receipts) {
+      let currDate = new Date();
+
+      if (timeFrame == "Week") {
+        // Initialize an array to store totals for each day of the week
+        let dailyTotals = Array(7).fill(0);
+
+        // Iterate through receipts and add their totals to the corresponding day
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate);
+          let daysAgo = Math.floor(
+            (currDate - itemDate) / (1000 * 60 * 60 * 24)
+          );
+
+          if (daysAgo < 7) {
+            dailyTotals[daysAgo] += item.total;
+          }
+        });
+        totalsInOrder = dailyTotals;
+      } else if (timeFrame === "Month") {
+        let weeklyTotals = [0, 0, 0, 0];
+
+        // Iterate through receipts and add their totals to the corresponding week
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate);
+          let daysAgo = Math.floor(
+            (currDate - itemDate) / (1000 * 60 * 60 * 24)
+          );
+          if (daysAgo < 7) {
+            weeklyTotals[0] += item.total;
+          } else if (daysAgo < 14) {
+            weeklyTotals[1] += item.total;
+          } else if (daysAgo < 21) {
+            weeklyTotals[2] += item.total;
+          } else if (daysAgo < 28) {
+            weeklyTotals[3] += item.total;
+          }
+        });
+
+        totalsInOrder = weeklyTotals;
+      } else if (timeFrame === "Year") {
+        //aggregate total by month and push to data
+        let monthlyTotals = Array(12).fill(0);
+
+        // Iterate through receipts and add their totals to the corresponding day
+        receipts.forEach((item) => {
+          let itemDate = new Date(item.purchaseDate);
+          let month = itemDate.getMonth();
+          monthlyTotals[month] += item.total;
+        });
+
+        //reorder the monthly totals to start from current month
+        let currMonth = currDate.getMonth();
+        for (let i = 0; i < 12; i++) {
+          let idx = (currMonth - i + 12) % 12;
+          totalsInOrder.push(monthlyTotals[idx]);
         }
-      });
-      setChartData({ labels: labels, data: data });
+      }
     }
+    setChartData({ labels: labels, data: totalsInOrder });
   };
 
+  const getR = async () => {
+    setIsLoading(true);
+    try {
+      let receiptsDB = await getUserReceipts(user.$id, chartTimeFrame);
+      console.log(
+        "within promise: ",
+        chartTimeFrame,
+        receiptsDB.map((item) => item.total)
+      );
+      return receiptsDB;
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    loadChartData();
-    // console.log("chart data is: ", chartData);
+    getR().then((result) => {
+      loadChartData(chartTimeFrame, result);
+    });
   }, [chartTimeFrame]);
 
+  useEffect(() => {
+    getR().then((result) => {
+      loadChartData(chartTimeFrame, result);
+    });
+  }, []);
   return (
     <View className="flex h-[350px] justify-start items-center">
       <View
@@ -117,7 +167,15 @@ const StatisticsBox = () => {
           isActive={chartTimeFrame === "Year"}
         />
       </View>
-      <CustomChart chartData={chartData} timeFrame={chartTimeFrame} />
+      {isLoading ? (
+        <View>
+          <Text className="text-white text-xl font-pextralight">
+            Loading~~~
+          </Text>
+        </View>
+      ) : (
+        <CustomChart chartData={chartData} timeFrame={chartTimeFrame} />
+      )}
     </View>
   );
 };
