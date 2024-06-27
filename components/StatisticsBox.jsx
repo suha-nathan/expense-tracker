@@ -13,22 +13,22 @@ const StatisticsBox = () => {
 
   const numDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
-  const generateLabels = () => {
+  const generateLabels = (timeFrame) => {
     let today = new Date();
     let todayInSec = Date.now();
     let oneDay = 24 * 60 * 60 * 1000;
     let labels = [];
-    if (chartTimeFrame === "Week") {
+    if (timeFrame === "Week") {
       for (let i = 0; i < 7; i++) {
         let date = new Date(todayInSec - oneDay * i);
         labels.push(`${date.getDate()}/${date.getMonth() + 1}`);
       }
-    } else if (chartTimeFrame === "Month") {
+    } else if (timeFrame === "Month") {
       for (let i = 0; i < 4; i++) {
         let date = new Date(todayInSec - oneDay * 7 * i);
         labels.push(`${date.getDate()}/${date.getMonth() + 1}`);
       }
-    } else if (chartTimeFrame === "Year") {
+    } else if (timeFrame === "Year") {
       for (let i = 0; i < 12; i++) {
         //not correct
         let numDays = numDaysInMonth(
@@ -39,19 +39,12 @@ const StatisticsBox = () => {
         labels.push(`${date.getDate()}/${date.getMonth() + 1}`);
       }
     }
-    // console.log(labels);
     return labels;
   };
 
   const loadChartData = (timeFrame, receipts) => {
-    // generate labels for given time frame
-    console.log(
-      "within loadChartData",
-      timeFrame,
-      receipts.map((item) => item.total)
-    );
     let totalsInOrder = [];
-    let labels = generateLabels();
+    let labels = generateLabels(timeFrame);
 
     if (receipts) {
       let currDate = new Date();
@@ -119,11 +112,6 @@ const StatisticsBox = () => {
     setIsLoading(true);
     try {
       let receiptsDB = await getUserReceipts(user.$id, chartTimeFrame);
-      console.log(
-        "within promise: ",
-        chartTimeFrame,
-        receiptsDB.map((item) => item.total)
-      );
       return receiptsDB;
     } catch (error) {
       throw new Error(error);
@@ -169,7 +157,7 @@ const StatisticsBox = () => {
       </View>
       {isLoading ? (
         <View>
-          <Text className="text-white text-xl font-pextralight">
+          <Text className="text-white text-xl font-pextralight mt-2">
             Loading~~~
           </Text>
         </View>
