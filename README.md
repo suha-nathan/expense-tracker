@@ -9,7 +9,11 @@
 - Appwrite for database
 - Nativewind
 
-### Features
+### User Stories
+- Search for regularly bought groceries from major grocery stores. Such as superstore, walmart
+- Create, View, Update, Delete expenses made. Receipt upload with expense.
+- Track expenses and view changes in expenses made (daily, weekly, monthly)
+- Secured record-keeping (user authentication)
 
 
 ### Initial Database design
